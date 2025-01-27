@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -52,18 +53,19 @@ func main() {
 
 	r := gin.Default()
 
-	// Load HTML templates
-	r.LoadHTMLGlob("templates/*")
-
 	// Routes
 
 	// Patient Routes
 	r.GET("/patients", func(c *gin.Context) {
 		var patients []Patient
 		db.Find(&patients)
-		c.HTML(http.StatusOK, "patients.html", gin.H{
-			"patients": patients,
-		})
+
+		// Return HTML with data for htmx to parse
+		var html string
+		for _, patient := range patients {
+			html += fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
+		}
+		c.Data(http.StatusOK, "text/html", []byte(html))
 	})
 
 	r.POST("/patients", func(c *gin.Context) {
@@ -73,18 +75,23 @@ func main() {
 			return
 		}
 		db.Create(&patient)
-		c.HTML(http.StatusCreated, "patient_created.html", gin.H{
-			"patient": patient,
-		})
+
+		// Return HTML with the created patient data
+		html := fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
+		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
 	// Appointment Routes
 	r.GET("/appointments", func(c *gin.Context) {
 		var appointments []Appointment
 		db.Find(&appointments)
-		c.HTML(http.StatusOK, "appointments.html", gin.H{
-			"appointments": appointments,
-		})
+
+		// Return HTML with appointment data for htmx to parse
+		var html string
+		for _, appointment := range appointments {
+			html += fmt.Sprintf("<div>Appointment: %s at %s</div>", appointment.Date, appointment.Time)
+		}
+		c.Data(http.StatusOK, "text/html", []byte(html))
 	})
 
 	r.POST("/appointments", func(c *gin.Context) {
@@ -94,18 +101,23 @@ func main() {
 			return
 		}
 		db.Create(&appointment)
-		c.HTML(http.StatusCreated, "appointment_created.html", gin.H{
-			"appointment": appointment,
-		})
+
+		// Return HTML with the created appointment data
+		html := fmt.Sprintf("<div>Appointment: %s at %s</div>", appointment.Date, appointment.Time)
+		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
 	// Inventory Routes
 	r.GET("/inventory", func(c *gin.Context) {
 		var inventory []Inventory
 		db.Find(&inventory)
-		c.HTML(http.StatusOK, "inventory.html", gin.H{
-			"inventory": inventory,
-		})
+
+		// Return HTML with inventory data for htmx to parse
+		var html string
+		for _, item := range inventory {
+			html += fmt.Sprintf("<div>%s: %d</div>", item.ItemName, item.Quantity)
+		}
+		c.Data(http.StatusOK, "text/html", []byte(html))
 	})
 
 	r.POST("/inventory", func(c *gin.Context) {
@@ -115,10 +127,10 @@ func main() {
 			return
 		}
 		db.Create(&inventory)
-		c.HTML(http.StatusCreated, "inventory_created.html", gin.H{
-			"inventory": inventory,
-		})
+
+		// Return HTML with the created inventory data
+		html := fmt.Sprintf("<div>%s: %d</div>", inventory.ItemName, inventory.Quantity)
+		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
 	r.Run() // Run the server
-}
