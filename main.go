@@ -134,3 +134,4 @@ func main() {
 	})
 
 	r.Run() // Run the server
+}
