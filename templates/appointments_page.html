@@ -34,17 +34,17 @@
       <div class="p-6">
         <h2 class="text-xl font-semibold mb-4">Manage Appointments</h2>
 
-        <!-- Form for Adding Appointments -->
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-lg font-bold mb-2">Add New Appointment</h3>
-          <form hx-post="/appointments" class="space-y-4">
-            <input type="number" name="patient_id" placeholder="Patient ID" class="block w-full p-2 border border-gray-300 rounded">
-            <input type="date" name="date" class="block w-full p-2 border border-gray-300 rounded">
-            <input type="time" name="time" class="block w-full p-2 border border-gray-300 rounded">
-            <textarea name="description" placeholder="Description" class="block w-full p-2 border border-gray-300 rounded"></textarea>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Appointment</button>
-          </form>
-        </div>
+       <!-- Form for Adding Appointments -->
+<div class="bg-white p-4 rounded-lg shadow">
+  <h3 class="text-lg font-bold mb-2">Add New Appointment</h3>
+  <form hx-post="/appointments" class="space-y-4">
+    <input type="number" name="patient_id" placeholder="Patient ID" class="block w-full p-2 border border-gray-300 rounded" required>
+    <input type="date" name="date" class="block w-full p-2 border border-gray-300 rounded" required>
+    <input type="time" name="time" class="block w-full p-2 border border-gray-300 rounded" required>
+    <textarea name="description" placeholder="Description" class="block w-full p-2 border border-gray-300 rounded" required></textarea>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Appointment</button>
+  </form>
+</div>
 
         <!-- Table for Appointment List -->
         <div class="mt-6">
