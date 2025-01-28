@@ -56,9 +56,10 @@ func main() {
 
 	// CORS configuration (allow requests from w3spaces)
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://tamoagrohealth.w3spaces.com"}, 
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+		AllowOrigins:     []string{"https://tamoagrohealth.w3spaces.com"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "hx-current-url"},
+		AllowCredentials: true,
 	}))
 
 	// Routes
