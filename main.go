@@ -54,7 +54,11 @@ func main() {
 
 	r := gin.Default()
 
-	// CORS configuration (allow requests from w3spaces)
+	// Serve static files (frontend)
+	r.Static("/static", "./static") // Serve static files like CSS, JS
+	r.LoadHTMLGlob("templates/*")   // Load HTML templates
+
+	// CORS configuration (if still needed for other external APIs)
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://tamo-front.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
@@ -63,6 +67,23 @@ func main() {
 	}))
 
 	// Routes
+
+	// Serve the main frontend pages
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+
+	r.GET("/patients", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "patients_page.html", nil)
+	})
+
+	r.GET("/appointments", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "appointments_page.html", nil)
+	})
+
+	r.GET("/inventory", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "inventory_page.html", nil)
+	})
 
 	// Patient Routes
 	r.GET("/patients/all", func(c *gin.Context) {

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Appointments</title>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-1/5 bg-black text-white h-screen p-4">
+          <div class="mb-6">
+            <h1 class="text-center text-xl font-bold">Healthcare</h1>
+          </div>
+            <ul>
+            <li class="py-2 px-4 hover:bg-gray-700"><a href="/">Dashboard</a></li>
+            <li class="py-2 px-4 hover:bg-gray-700"><a href="patients">Patients</a></li>
+            <li class="py-2 px-4 hover:bg-gray-700"><a href="/appointments">Appointments</a></li>
+            <li class="py-2 px-4 hover:bg-gray-700"><a href="/inventory">Inventory</a></li>
+            </ul>
+          </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 bg-gray-50">
+      <header class="bg-black text-white p-4 flex items-center justify-between">
+        <h1 class="text-xl font-bold">Appointments</h1>
+        <button class="p-2 bg-gray-700 rounded-full">
+          <img src="/path-to-bell-icon.svg" alt="Notifications" class="w-6 h-6">
+        </button>
+      </header>
+      <div class="p-6">
+        <h2 class="text-xl font-semibold mb-4">Manage Appointments</h2>
+
+        <!-- Form for Adding Appointments -->
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h3 class="text-lg font-bold mb-2">Add New Appointment</h3>
+          <form hx-post="/appointments" class="space-y-4">
+            <input type="number" name="patient_id" placeholder="Patient ID" class="block w-full p-2 border border-gray-300 rounded">
+            <input type="date" name="date" class="block w-full p-2 border border-gray-300 rounded">
+            <input type="time" name="time" class="block w-full p-2 border border-gray-300 rounded">
+            <textarea name="description" placeholder="Description" class="block w-full p-2 border border-gray-300 rounded"></textarea>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Appointment</button>
+          </form>
+        </div>
+
+        <!-- Table for Appointment List -->
+        <div class="mt-6">
+          <h3 class="text-lg font-bold mb-2">Appointment List</h3>
+          <div id="appointment-list" class="bg-white p-4 rounded-lg shadow">
+            <!-- Table dynamically rendered by Go -->
+            <p class="text-center text-gray-400">No appointments available.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
+

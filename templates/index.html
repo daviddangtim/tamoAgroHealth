@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Dashboard</title>
+  <script src="https://unpkg.com/htmx.org"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-1/5 bg-black text-white h-screen p-4">
+      <div class="mb-6">
+        <h1 class="text-center text-xl font-bold">Healthcare</h1>
+      </div>
+        <ul>
+        <li class="py-2 px-4 hover:bg-gray-700"><a href="/">Dashboard</a></li>
+        <li class="py-2 px-4 hover:bg-gray-700"><a href="patients">Patients</a></li>
+        <li class="py-2 px-4 hover:bg-gray-700"><a href="/appointments">Appointments</a></li>
+        <li class="py-2 px-4 hover:bg-gray-700"><a href="/inventory">Inventory</a></li>
+        </ul>
+      </div>
+
+    <!-- Main Content -->
+    <div class="w-4/5 p-6">
+      <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+
+      <!-- Patients Section -->
+      <div class="bg-white p-6 shadow rounded mb-6">
+        <h2 class="text-xl font-bold mb-4">Patients</h2>
+        <table class="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border px-4 py-2">ID</th>
+              <th class="border px-4 py-2">Name</th>
+              <th class="border px-4 py-2">Age</th>
+              <th class="border px-4 py-2">Email</th>
+              <th class="border px-4 py-2">Phone</th>
+              <th class="border px-4 py-2">History</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/patients/all" hx-trigger="load" hx-swap="innerHTML">
+            <tr>
+              <td colspan="6" class="text-center py-2">Loading patients...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Appointments Section -->
+      <div class="bg-white p-6 shadow rounded mb-6">
+        <h2 class="text-xl font-bold mb-4">Appointments</h2>
+        <table class="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border px-4 py-2">ID</th>
+              <th class="border px-4 py-2">Patient ID</th>
+              <th class="border px-4 py-2">Date</th>
+              <th class="border px-4 py-2">Time</th>
+              <th class="border px-4 py-2">Description</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/appointments/all" hx-trigger="load" hx-swap="innerHTML">
+            <tr>
+              <td colspan="5" class="text-center py-2">Loading appointments...</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+      <!-- Inventory Section -->
+      <div class="bg-white p-6 shadow rounded mb-6">
+        <h2 class="text-xl font-bold mb-4">Inventory</h2>
+        <table class="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border px-4 py-2">ID</th>
+              <th class="border px-4 py-2">Item Name</th>
+              <th class="border px-4 py-2">Quantity</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/inventory/all" hx-trigger="load" hx-swap="innerHTML">
+            <tr>
+              <td colspan="3" class="text-center py-2">Loading inventory...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
