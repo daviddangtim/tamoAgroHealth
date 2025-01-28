@@ -155,7 +155,8 @@ func main() {
 	r.GET("/inventory/list", func(c *gin.Context) {
 		var inventories []Inventory
 		db.Find(&inventories)
-
+		fmt.Printf("Fetched inventories: %+v\n", inventories) // Log the fetched data
+	
 		var html strings.Builder
 		if len(inventories) == 0 {
 			html.WriteString(`<p class="text-center text-gray-400">No inventory items available.</p>`)
@@ -164,7 +165,7 @@ func main() {
 				html.WriteString(fmt.Sprintf(`<div class="inventory-item">%s: %d</div>`, inventory.ItemName, inventory.Quantity))
 			}
 		}
-
+	
 		c.Data(http.StatusOK, "text/html", []byte(html.String()))
 	})
 
@@ -175,6 +176,7 @@ func main() {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
+		fmt.Printf("Received inventory: %+v\n", inventory) // Log the received data
 	
 		// Save to database
 		db.Create(&inventory)
