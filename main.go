@@ -153,6 +153,7 @@ func main() {
 	r.POST("/inventory", func(c *gin.Context) {
 		var inventory Inventory
 		if err := c.ShouldBindJSON(&inventory); err != nil {
+			fmt.Printf("Binding error %e",err)
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
