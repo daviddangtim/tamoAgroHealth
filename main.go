@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 // Models
@@ -151,14 +153,25 @@ func main() {
 	})
 
 	r.POST("/inventory", func(c *gin.Context) {
+		// Read the raw request body
+		body, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			c.JSON(400, gin.H{"error": "Failed to read request body"})
+			return
+		}
+		fmt.Printf("Raw request body: %s\n", string(body))
+	
+		// Bind JSON to struct
 		var inventory Inventory
 		if err := c.ShouldBindJSON(&inventory); err != nil {
-			fmt.Printf("Binding error %e",err)
+			fmt.Printf("Binding error: %v\n", err)
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
+	
+		// Save to database
 		db.Create(&inventory)
-
+	
 		// Return HTML with the created inventory data
 		html := fmt.Sprintf("<div>%s: %d</div>", inventory.ItemName, inventory.Quantity)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
