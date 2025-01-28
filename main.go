@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -100,7 +102,7 @@ func main() {
 
 	r.POST("/patients", func(c *gin.Context) {
 		var patient Patient
-		if err := c.ShouldBindJSON(&patient); err != nil {
+		if err := c.ShouldBind(&patient); err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
@@ -126,7 +128,7 @@ func main() {
 
 	r.POST("/appointments", func(c *gin.Context) {
 		var appointment Appointment
-		if err := c.ShouldBindJSON(&appointment); err != nil {
+		if err := c.ShouldBind(&appointment); err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
@@ -148,6 +150,22 @@ func main() {
 			html += fmt.Sprintf("<div>%s: %d</div>", item.ItemName, item.Quantity)
 		}
 		c.Data(http.StatusOK, "text/html", []byte(html))
+	})
+
+	r.GET("/inventory/list", func(c *gin.Context) {
+		var inventories []Inventory
+		db.Find(&inventories)
+
+		var html strings.Builder
+		if len(inventories) == 0 {
+			html.WriteString(`<p class="text-center text-gray-400">No inventory items available.</p>`)
+		} else {
+			for _, inventory := range inventories {
+				html.WriteString(fmt.Sprintf(`<div class="inventory-item">%s: %d</div>`, inventory.ItemName, inventory.Quantity))
+			}
+		}
+
+		c.Data(http.StatusOK, "text/html", []byte(html.String()))
 	})
 
 	r.POST("/inventory", func(c *gin.Context) {
