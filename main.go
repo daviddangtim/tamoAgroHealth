@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -53,10 +54,17 @@ func main() {
 
 	r := gin.Default()
 
+	// CORS configuration (allow requests from w3spaces)
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"https://tamoagrohealth.w3spaces.com"}, 
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+	}))
+
 	// Routes
 
 	// Patient Routes
-	r.GET("/patients", func(c *gin.Context) {
+	r.GET("/patients/all", func(c *gin.Context) {
 		var patients []Patient
 		db.Find(&patients)
 
@@ -82,7 +90,7 @@ func main() {
 	})
 
 	// Appointment Routes
-	r.GET("/appointments", func(c *gin.Context) {
+	r.GET("/appointments/all", func(c *gin.Context) {
 		var appointments []Appointment
 		db.Find(&appointments)
 
@@ -108,7 +116,7 @@ func main() {
 	})
 
 	// Inventory Routes
-	r.GET("/inventory", func(c *gin.Context) {
+	r.GET("/inventory/all", func(c *gin.Context) {
 		var inventory []Inventory
 		db.Find(&inventory)
 
