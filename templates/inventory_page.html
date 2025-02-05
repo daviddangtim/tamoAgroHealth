@@ -37,7 +37,7 @@
         <!-- Form for Adding Inventory Items -->
         <div class="bg-white p-4 rounded-lg shadow">
           <h3 class="text-lg font-bold mb-2">Add New Item</h3>
-          <form hx-post="/inventory" class="space-y-4">
+          <form hx-post="/inventory" method="post" class="space-y-4">
             <input type="text" name="item_name" placeholder="Item Name" class="block w-full p-2 border border-gray-300 rounded">
             <input type="number" name="quantity" placeholder="Quantity" class="block w-full p-2 border border-gray-300 rounded">
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Item</button>

@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	// "github.com/gin-gonic/gin/binding"
 	"strings"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -14,6 +14,7 @@ import (
 // Models
 
 type Patient struct {
+	gorm.Model
 	ID       uint   `gorm:"primaryKey"`
 	Name     string `json:"name"`
 	Age      int    `json:"age"`
@@ -23,6 +24,7 @@ type Patient struct {
 }
 
 type Appointment struct {
+	gorm.Model
 	ID         uint   `gorm:"primaryKey"`
 	PatientID  uint   `json:"patient_id"`
 	Date       string `json:"date"`
@@ -31,6 +33,7 @@ type Appointment struct {
 }
 
 type Inventory struct {
+	gorm.Model
 	ID       uint   `gorm:"primaryKey"`
 	ItemName string `json:"item_name"`
 	Quantity int    `json:"quantity"`
@@ -56,11 +59,8 @@ func main() {
 
 	r := gin.Default()
 
-	// Serve static files (frontend)
-	r.Static("/static", "./static") // Serve static files like CSS, JS
-	r.LoadHTMLGlob("templates/*")   // Load HTML templates
-
-	// CORS configuration (if still needed for other external APIs)
+	r.Static("/static", "./static") 
+	r.LoadHTMLGlob("templates/*")   
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://tamo-front.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
@@ -68,9 +68,7 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	// Routes
 
-	// Serve the main frontend pages
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
@@ -87,12 +85,10 @@ func main() {
 		c.HTML(http.StatusOK, "inventory_page.html", nil)
 	})
 
-	// Patient Routes
 	r.GET("/patients/all", func(c *gin.Context) {
 		var patients []Patient
 		db.Find(&patients)
 
-		// Return HTML with data for htmx to parse
 		var html string
 		for _, patient := range patients {
 			html += fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
@@ -102,23 +98,20 @@ func main() {
 
 	r.POST("/patients", func(c *gin.Context) {
 		var patient Patient
-		if err := c.ShouldBind(&patient); err != nil {
+		if err := c.Bind(&patient); err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
 		db.Create(&patient)
 
-		// Return HTML with the created patient data
 		html := fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
-	// Appointment Routes
 	r.GET("/appointments/all", func(c *gin.Context) {
 		var appointments []Appointment
 		db.Find(&appointments)
 
-		// Return HTML with appointment data for htmx to parse
 		var html string
 		for _, appointment := range appointments {
 			html += fmt.Sprintf("<div>Appointment: %s at %s</div>", appointment.Date, appointment.Time)
@@ -128,23 +121,20 @@ func main() {
 
 	r.POST("/appointments", func(c *gin.Context) {
 		var appointment Appointment
-		if err := c.ShouldBind(&appointment); err != nil {
+		if err := c.Bind(&appointment); err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
 		db.Create(&appointment)
 
-		// Return HTML with the created appointment data
 		html := fmt.Sprintf("<div>Appointment: %s at %s</div>", appointment.Date, appointment.Time)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
-	// Inventory Routes
 	r.GET("/inventory/all", func(c *gin.Context) {
 		var inventory []Inventory
 		db.Find(&inventory)
 
-		// Return HTML with inventory data for htmx to parse
 		var html string
 		for _, item := range inventory {
 			html += fmt.Sprintf("<div>%s: %d</div>", item.ItemName, item.Quantity)
@@ -170,18 +160,27 @@ func main() {
 	})
 
 	r.POST("/inventory", func(c *gin.Context) {
+		// Log the raw form data
+		fmt.Printf("Raw form data: %v\n", c.Request.PostForm)
+		
 		var inventory Inventory
-		if err := c.ShouldBind(&inventory); err != nil {
+		if err := c.Bind(&inventory); err != nil {
 			fmt.Printf("Binding error: %v\n", err)
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
-		fmt.Printf("Received inventory: %+v\n", inventory) // Log the received data
 	
-		// Save to database
-		db.Create(&inventory)
+		fmt.Printf("After binding: %+v\n", inventory)
 	
-		// Return HTML with the created inventory data
+		result := db.Create(&inventory)
+		if result.Error != nil {
+			fmt.Printf("Database error: %v\n", result.Error)
+			c.JSON(500, gin.H{"error": "Failed to save to database"})
+			return
+		}
+	
+		fmt.Printf("After save: %+v\n", inventory)
+	
 		html := fmt.Sprintf("<div>%s: %d</div>", inventory.ItemName, inventory.Quantity)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
