@@ -27,6 +27,28 @@
     <div class="w-4/5 p-6">
       <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
 
+       <!-- Stats Cards -->
+       <div class="grid grid-cols-3 gap-6 mb-6">
+        <!-- Number of Patients Card -->
+        <div class="bg-white p-6 shadow rounded">
+          <h3 class="text-xl font-bold mb-4">Total Patients</h3>
+          <p class="text-4xl font-semibold" hx-get="/patients/count" hx-trigger="load" hx-target="#patients-count">0</p>
+        </div>
+
+        <!-- Number of Appointments Card -->
+        <div class="bg-white p-6 shadow rounded">
+          <h3 class="text-xl font-bold mb-4">Total Appointments</h3>
+          <p class="text-4xl font-semibold" hx-get="/appointments/count" hx-trigger="load" hx-target="#appointments-count">0</p>
+        </div>
+
+        <!-- Number of Inventory Items Card -->
+        <div class="bg-white p-6 shadow rounded">
+          <h3 class="text-xl font-bold mb-4">Total Inventory Items</h3>
+          <p class="text-4xl font-semibold" hx-get="/inventory/count" hx-trigger="load" hx-target="#inventory-count">0</p>
+        </div>
+      </div>
+
+
       <!-- Patients Section -->
       <div class="bg-white p-6 shadow rounded mb-6">
         <h2 class="text-xl font-bold mb-4">Patients</h2>

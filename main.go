@@ -85,16 +85,29 @@ func main() {
 		c.HTML(http.StatusOK, "inventory_page.html", nil)
 	})
 
+
+	// Patients section
 	r.GET("/patients/all", func(c *gin.Context) {
 		var patients []Patient
 		db.Find(&patients)
-
-		var html string
+	
+		var html strings.Builder
 		for _, patient := range patients {
-			html += fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
+			html.WriteString(fmt.Sprintf(`
+				<tr>
+					<td class="border px-4 py-2">%d</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%d</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%s</td>
+				</tr>`, patient.ID, patient.Name, patient.Age, patient.Email, patient.Phone, patient.History))
 		}
-		c.Data(http.StatusOK, "text/html", []byte(html))
+	
+		// Send back the complete table content to replace the current tbody
+		c.Data(http.StatusOK, "text/html", []byte(html.String()))
 	})
+	
 
 	r.POST("/patients", func(c *gin.Context) {
 		var patient Patient
@@ -108,16 +121,35 @@ func main() {
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
+	r.GET("/patients/count", func(c *gin.Context) {
+		var count int64
+		db.Model(&Patient{}).Count(&count)
+		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	})
+	
+
+
+	// Appointment section
 	r.GET("/appointments/all", func(c *gin.Context) {
 		var appointments []Appointment
 		db.Find(&appointments)
-
-		var html string
+	
+		var html strings.Builder
 		for _, appointment := range appointments {
-			html += fmt.Sprintf("<div>Appointment: %s at %s</div>", appointment.Date, appointment.Time)
+			html.WriteString(fmt.Sprintf(`
+				<tr>
+					<td class="border px-4 py-2">%d</td>
+					<td class="border px-4 py-2">%d</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%s</td>
+				</tr>`, appointment.ID, appointment.PatientID, appointment.Date, appointment.Time, appointment.Description))
 		}
-		c.Data(http.StatusOK, "text/html", []byte(html))
+	
+		// Send back the complete table content to replace the current tbody
+		c.Data(http.StatusOK, "text/html", []byte(html.String()))
 	})
+	
 
 	r.POST("/appointments", func(c *gin.Context) {
 		var appointment Appointment
@@ -131,16 +163,33 @@ func main() {
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
 
+	r.GET("/appointments/count", func(c *gin.Context) {
+		var count int64
+		db.Model(&Appointment{}).Count(&count)
+		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	})
+	
+
+
+	// Inventory Section
 	r.GET("/inventory/all", func(c *gin.Context) {
 		var inventory []Inventory
 		db.Find(&inventory)
-
-		var html string
+	
+		var html strings.Builder
 		for _, item := range inventory {
-			html += fmt.Sprintf("<div>%s: %d</div>", item.ItemName, item.Quantity)
+			html.WriteString(fmt.Sprintf(`
+				<tr>
+					<td class="border px-4 py-2">%d</td>
+					<td class="border px-4 py-2">%s</td>
+					<td class="border px-4 py-2">%d</td>
+				</tr>`, item.ID, item.ItemName, item.Quantity))
 		}
-		c.Data(http.StatusOK, "text/html", []byte(html))
+	
+		// Send back the complete table content to replace the current tbody
+		c.Data(http.StatusOK, "text/html", []byte(html.String()))
 	})
+	
 
 	r.GET("/inventory/list", func(c *gin.Context) {
 		var inventories []Inventory
@@ -184,6 +233,13 @@ func main() {
 		html := fmt.Sprintf("<div>%s: %d</div>", inventory.ItemName, inventory.Quantity)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
 	})
+
+	r.GET("/inventory/count", func(c *gin.Context) {
+		var count int64
+		db.Model(&Inventory{}).Count(&count)
+		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	})
+	
 
 	r.Run() // Run the server
 }
