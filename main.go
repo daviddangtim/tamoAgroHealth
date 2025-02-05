@@ -124,7 +124,14 @@ func main() {
 	r.GET("/patients/count", func(c *gin.Context) {
 		var count int64
 		db.Model(&Patient{}).Count(&count)
-		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	
+		// Return the count wrapped in styled HTML matching your example
+		c.String(http.StatusOK, fmt.Sprintf(`
+			<div class="bg-white p-6 shadow rounded">
+				<h3 class="text-xl font-bold mb-4">Total Patients</h3>
+				<p class="text-4xl font-semibold">%d</p>
+			</div>
+		`, count))
 	})
 	
 
@@ -166,7 +173,14 @@ func main() {
 	r.GET("/appointments/count", func(c *gin.Context) {
 		var count int64
 		db.Model(&Appointment{}).Count(&count)
-		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	
+		// Return the count wrapped in styled HTML matching your example
+		c.String(http.StatusOK, fmt.Sprintf(`
+			<div class="bg-white p-6 shadow rounded">
+				<h3 class="text-xl font-bold mb-4">Total Appointments</h3>
+				<p class="text-4xl font-semibold">%d</p>
+			</div>
+		`, count))
 	})
 	
 
@@ -237,7 +251,14 @@ func main() {
 	r.GET("/inventory/count", func(c *gin.Context) {
 		var count int64
 		db.Model(&Inventory{}).Count(&count)
-		c.String(http.StatusOK, fmt.Sprintf("%d", count))
+	
+		// Return the count wrapped in styled HTML matching your example
+		c.String(http.StatusOK, fmt.Sprintf(`
+			<div class="bg-white p-6 shadow rounded">
+				<h3 class="text-xl font-bold mb-4">Total Inventory</h3>
+				<p class="text-4xl font-semibold">%d</p>
+			</div>
+		`, count))
 	})
 	
 
