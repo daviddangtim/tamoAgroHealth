@@ -110,12 +110,23 @@ func main() {
 	
 
 	r.POST("/patients", func(c *gin.Context) {
+
+		fmt.Printf("raw form data: %v\n", c.Request.PostForm)
+
 		var patient Patient
 		if err := c.Bind(&patient); err != nil {
+			fmt.Printf("Binding error: %v\n", err)
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
+
 		}
-		db.Create(&patient)
+
+		result := db.Create(&patient)
+		if result.Error != nil {
+			fmt.Printf("Db error: %v\n", result.Error)
+			c.JSON(500, gin.H{"error": result.Error.Error()})
+			return
+		}
 
 		html := fmt.Sprintf("<div>%s - %d</div>", patient.Name, patient.Age)
 		c.Data(http.StatusCreated, "text/html", []byte(html))
